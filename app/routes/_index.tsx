@@ -6,7 +6,11 @@ import { LoaderFunction, json } from "@remix-run/node";
 
 export const loader: LoaderFunction = async (args) => {
   try {
-    const { userId } = await getAuth(args);
+    const { userId } = await getAuth(args, {
+      secretKey:
+        process.env.CLERK_SECRET_KEY ||
+        "sk_test_k2n5NC2uUwockW57lc1Qdg2X94DMI1Q5kQhXDhY8jF",
+    });
     return json({ isSignedIn: !!userId });
   } catch (err) {
     console.error(err);

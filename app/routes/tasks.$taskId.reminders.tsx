@@ -12,7 +12,11 @@ import { Resend } from "resend";
 
 export const action: ActionFunction = async (args) => {
   const { params, request } = args;
-  const { userId } = await getAuth(args);
+  const { userId } = await getAuth(args, {
+    secretKey:
+      process.env.CLERK_SECRET_KEY ||
+      "sk_test_k2n5NC2uUwockW57lc1Qdg2X94DMI1Q5kQhXDhY8jF",
+  });
   if (!userId) return redirect("/sign-in");
   const user = await createClerkClient({
     secretKey: "sk_test_k2n5NC2uUwockW57lc1Qdg2X94DMI1Q5kQhXDhY8jF",
