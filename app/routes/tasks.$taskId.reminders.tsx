@@ -15,7 +15,7 @@ export const action: ActionFunction = async (args) => {
   const { userId } = await getAuth(args);
   if (!userId) return redirect("/sign-in");
   const user = await createClerkClient({
-    secretKey: import.meta.env.VITE_CLERK_SECRET_KEY,
+    secretKey: "sk_test_k2n5NC2uUwockW57lc1Qdg2X94DMI1Q5kQhXDhY8jF",
   }).users.getUser(userId);
   const taskId = params.taskId;
   if (!taskId) throw new Error("Task ID is required");
