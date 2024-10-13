@@ -37,24 +37,29 @@ export const meta: MetaFunction = () => [
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
 export const loader: LoaderFunction = (args) => {
-  return rootAuthLoader(args, async ({ request }) => {
-    const session = await getSession(request.headers.get("cookie"));
+  try {
+    return rootAuthLoader(args, async ({ request }) => {
+      const session = await getSession(request.headers.get("cookie"));
 
-    const toastMessage = session.get("toastMessage") as ToastMessage;
+      const toastMessage = session.get("toastMessage") as ToastMessage;
 
-    if (!toastMessage) {
-      return json({ toastMessage: null });
-    }
+      if (!toastMessage) {
+        return json({ toastMessage: null });
+      }
 
-    if (!toastMessage.type) {
-      throw new Error("Message should have a type");
-    }
+      if (!toastMessage.type) {
+        throw new Error("Message should have a type");
+      }
 
-    return json(
-      { toastMessage },
-      { headers: { "Set-Cookie": await commitSession(session) } }
-    );
-  });
+      return json(
+        { toastMessage },
+        { headers: { "Set-Cookie": await commitSession(session) } }
+      );
+    });
+  } catch (error) {
+    console.error(error);
+    return json({ toastMessage: null });
+  }
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {

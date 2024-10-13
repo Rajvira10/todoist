@@ -5,8 +5,13 @@ import { getAuth } from "@clerk/remix/ssr.server";
 import { LoaderFunction, json } from "@remix-run/node";
 
 export const loader: LoaderFunction = async (args) => {
-  const { userId } = await getAuth(args);
-  return json({ isSignedIn: !!userId });
+  try {
+    const { userId } = await getAuth(args);
+    return json({ isSignedIn: !!userId });
+  } catch (err) {
+    console.error(err);
+    return json({ isSignedIn: false });
+  }
 };
 
 export default function Index() {
