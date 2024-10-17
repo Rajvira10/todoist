@@ -54,7 +54,16 @@ export const loader: LoaderFunction = (args) => {
         }
 
         return json(
-          { toastMessage },
+          {
+            toastMessage,
+            ENV: {
+              VITE_CLERK_PUBLISHABLE_KEY: import.meta.env
+                .VITE_CLERK_PUBLISHABLE_KEY,
+              VITE_CLERK_SECRET_KEY: import.meta.env.VITE_CLERK_SECRET_KEY,
+              CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY,
+              VITE_RESEND_API_KEY: import.meta.env.VITE_RESEND_API_KEY,
+            },
+          },
           { headers: { "Set-Cookie": await commitSession(session) } }
         );
       },
@@ -91,7 +100,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function App() {
   const { toast } = useToast();
-  const { toastMessage } = useLoaderData<typeof loader>();
+  const { toastMessage, ENV } = useLoaderData<typeof loader>();
   useEffect(() => {
     if (!toastMessage) {
       return;
@@ -117,7 +126,16 @@ function App() {
         throw new Error(`${type} is not handled`);
     }
   }, [toastMessage, toast]);
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.ENV = ${JSON.stringify(ENV)}`,
+        }}
+      />
+    </>
+  );
 }
 
 export default ClerkApp(App);
